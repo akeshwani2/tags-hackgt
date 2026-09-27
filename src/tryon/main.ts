@@ -19,6 +19,7 @@ const productImage = requiredElement<HTMLImageElement>("product-image");
 const productTitle = requiredElement<HTMLElement>("product-title");
 const productLink = requiredElement<HTMLAnchorElement>("product-link");
 const retryButton = requiredElement<HTMLButtonElement>("retry-button");
+const addToCartButton = requiredElement<HTMLButtonElement>("add-to-cart-button");
 const stopButton = requiredElement<HTMLButtonElement>("stop-button");
 const errorPanel = requiredElement<HTMLElement>("error-panel");
 const errorTitle = requiredElement<HTMLElement>("error-title");
@@ -30,6 +31,10 @@ let activeSelection: ProductSelection | null = null;
 let initializationId = 0;
 
 retryButton.addEventListener("click", () => void initialize());
+addToCartButton.addEventListener("click", () => {
+  addToCartButton.textContent = "Added to cart";
+  addToCartButton.disabled = true;
+});
 stopButton.addEventListener("click", () => {
   cleanup();
   window.close();

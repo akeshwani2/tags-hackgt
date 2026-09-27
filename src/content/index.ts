@@ -88,7 +88,7 @@ function mountOverlays(): void {
         const response = (await chrome.runtime.sendMessage(message)) as ExtensionResponse;
         if (!response.ok) throw new Error(response.error);
       } catch (error) {
-        console.error("FitCam could not open try-on", error);
+        console.error("tags could not open try-on", error);
       } finally {
         button.disabled = false;
       }

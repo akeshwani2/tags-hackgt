@@ -4,11 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark" />
-    <title>Try It On</title>
+    <title>tags</title>
     <link rel="stylesheet" href="/src/tryon/styles.css" />
   </head>
   <body>
     <main class="shell">
+      <header class="app-header">
+        <img class="brand-logo" src="/icons/tags-logo-header.png" alt="tags" width="36" height="36" />
+      </header>
+
       <p id="status-label" class="visually-hidden" aria-live="polite">Preparing camera</p>
 
       <section class="stage" aria-label="Camera preview">
@@ -23,11 +27,12 @@
       <aside class="product-bar">
         <img id="product-image" alt="" />
         <div class="product-copy">
-          <p class="eyebrow">Trying on</p>
+          <p class="eyebrow brand-label">tags</p>
           <h2 id="product-title">Selected garment</h2>
           <a id="product-link" href="#" target="_blank" rel="noreferrer">View product</a>
         </div>
         <button id="retry-button" type="button" class="secondary-button" hidden>Retry</button>
+        <button id="add-to-cart-button" type="button" class="secondary-button">Add to cart</button>
         <button id="stop-button" type="button" class="primary-button">Stop camera</button>
       </aside>
 
