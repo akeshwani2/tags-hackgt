@@ -1,48 +1,67 @@
-import { detectProducts } from "./detection";
+import { detectProducts, type DetectedProduct } from "./detection";
 import type { ExtensionMessage, ExtensionResponse } from "../shared/messages";
 
 const MARKER = "data-fitcam-mounted";
 const RESCAN_DELAY_MS = 180;
-const cameraIcon = `
-  <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8.4 6.3 9.55 4.5h4.9l1.15 1.8H19a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.3a2 2 0 0 1 2-2h3.4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
-    <circle cx="12" cy="12.25" r="3.35" stroke="currentColor" stroke-width="1.7"/>
-  </svg>
-`;
 let rescanTimer: number | undefined;
 
-function mountOverlays(): void {
-  for (const product of detectProducts()) {
-    if (product.mount.hasAttribute(MARKER)) continue;
-    product.mount.setAttribute(MARKER, "true");
+function createCameraIcon(): SVGSVGElement {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("fill", "none");
 
-    const computedPosition = window.getComputedStyle(product.mount).position;
-    if (computedPosition === "static") {
-      product.mount.dataset.fitcamOriginalPosition = product.mount.style.position;
-      product.mount.style.position = "relative";
-    }
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M8.4 6.3 9.55 4.5h4.9l1.15 1.8H19a2 2 0 0 1 2 2v8.2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8.3a2 2 0 0 1 2-2h3.4Z",
+  );
+  path.setAttribute("stroke", "currentColor");
+  path.setAttribute("stroke-width", "1.7");
+  path.setAttribute("stroke-linejoin", "round");
 
-    const host = document.createElement("span");
-    host.className = "fitcam-overlay-host";
-    host.style.cssText = [
-      "position:absolute",
-      "top:12px",
-      "right:12px",
-      "z-index:2147483646",
-      "width:42px",
-      "height:42px",
-      "pointer-events:auto",
-    ].join(";");
+  const circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+  circle.setAttribute("cx", "12");
+  circle.setAttribute("cy", "12.25");
+  circle.setAttribute("r", "3.35");
+  circle.setAttribute("stroke", "currentColor");
+  circle.setAttribute("stroke-width", "1.7");
 
-    const shadow = host.attachShadow({ mode: "closed" });
-    const button = document.createElement("button");
-    button.type = "button";
-    button.setAttribute("aria-label", `Try on ${product.selection.title}`);
-    button.title = `Try on ${product.selection.title}`;
-    button.innerHTML = cameraIcon;
+  svg.append(path, circle);
+  return svg;
+}
 
-    const style = document.createElement("style");
-    style.textContent = `
+function mountOverlay(product: DetectedProduct): void {
+  if (product.mount.hasAttribute(MARKER)) return;
+  product.mount.setAttribute(MARKER, "true");
+
+  const computedPosition = window.getComputedStyle(product.mount).position;
+  if (computedPosition === "static") {
+    product.mount.dataset.fitcamOriginalPosition = product.mount.style.position;
+    product.mount.style.position = "relative";
+  }
+
+  const host = document.createElement("span");
+  host.className = "fitcam-overlay-host";
+  host.style.cssText = [
+    "position:absolute",
+    "top:12px",
+    "right:12px",
+    "z-index:2147483646",
+    "width:42px",
+    "height:42px",
+    "pointer-events:auto",
+  ].join(";");
+
+  const shadow = host.attachShadow({ mode: "closed" });
+  const button = document.createElement("button");
+  button.type = "button";
+  button.setAttribute("aria-label", `Try on ${product.selection.title}`);
+  button.title = `Try on ${product.selection.title}`;
+  button.append(createCameraIcon());
+
+  const style = document.createElement("style");
+  style.textContent = `
       :host { all: initial; }
       button {
         all: unset;
@@ -74,28 +93,41 @@ function mountOverlays(): void {
       svg { width: 21px; height: 21px; display: block; }
     `;
 
-    button.addEventListener("click", async (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      button.disabled = true;
+  button.addEventListener("click", async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    button.disabled = true;
 
-      const message: ExtensionMessage = {
-        type: "OPEN_TRY_ON",
-        selection: product.selection,
-      };
+    const message: ExtensionMessage = {
+      type: "OPEN_TRY_ON",
+      selection: product.selection,
+    };
 
-      try {
-        const response = (await chrome.runtime.sendMessage(message)) as ExtensionResponse;
-        if (!response.ok) throw new Error(response.error);
-      } catch (error) {
-        console.error("tags could not open try-on", error);
-      } finally {
-        button.disabled = false;
+    try {
+      const response = (await chrome.runtime.sendMessage(message)) as
+        | ExtensionResponse
+        | undefined;
+      if (!response?.ok) {
+        throw new Error(response?.error || "No response from extension background");
       }
-    });
+    } catch (error) {
+      console.error("tags could not open try-on", error);
+    } finally {
+      button.disabled = false;
+    }
+  });
 
-    shadow.append(style, button);
-    product.mount.append(host);
+  shadow.append(style, button);
+  product.mount.append(host);
+}
+
+function mountOverlays(): void {
+  for (const product of detectProducts()) {
+    try {
+      mountOverlay(product);
+    } catch (error) {
+      console.error("tags overlay mount failed", error);
+    }
   }
 }
 
@@ -107,4 +139,8 @@ function scheduleRescan(): void {
 const observer = new MutationObserver(scheduleRescan);
 observer.observe(document.documentElement, { childList: true, subtree: true });
 window.addEventListener("pageshow", scheduleRescan);
-mountOverlays();
+try {
+  mountOverlays();
+} catch (error) {
+  console.error("tags initial mount failed", error);
+}
