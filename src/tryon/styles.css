@@ -1,0 +1,87 @@
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f7f7f4;
+  background: #0a0a0a;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html, body { margin: 0; min-width: 720px; min-height: 640px; background: #0a0a0a; }
+
+body { min-height: 100vh; }
+
+button, a { font: inherit; }
+
+.shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: minmax(420px, 1fr) auto auto auto;
+  gap: 14px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(255,255,255,0.07), transparent 34%),
+    #0a0a0a;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.product-bar {
+  display: flex;
+  align-items: center;
+}
+
+.stage {
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+  border-radius: 24px;
+  border: 1px solid #272727;
+  background: #141414;
+}
+
+#camera-output { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); background: #111; }
+
+.stage-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  background: radial-gradient(circle at center, #202020, #111 65%);
+}
+
+.stage-placeholder h1 { margin: 18px 0 7px; font-size: 26px; letter-spacing: -0.035em; }
+.stage-placeholder p { margin: 0; color: #a5a5a0; font-size: 14px; }
+.spinner { width: 34px; height: 34px; border: 3px solid #3a3a3a; border-top-color: #f5f5f0; border-radius: 50%; animation: spin 850ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.product-bar { gap: 13px; padding: 12px; border: 1px solid #292929; border-radius: 18px; background: #141414; }
+.product-bar img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; background: #eee; }
+.product-copy { min-width: 0; flex: 1; }
+.eyebrow { margin: 0 0 3px; color: #858580; font-size: 10px; font-weight: 700; letter-spacing: .13em; text-transform: uppercase; }
+.product-copy h2 { margin: 0 0 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 16px; }
+.product-copy a { color: #b9b9b4; font-size: 12px; text-underline-offset: 3px; }
+
+.primary-button, .secondary-button { border: 0; border-radius: 12px; padding: 11px 15px; cursor: pointer; }
+.primary-button { background: #f4f4ef; color: #111; font-weight: 700; }
+.secondary-button { background: #282828; color: #f3f3ef; }
+
+.error-panel { padding: 13px 15px; border: 1px solid rgba(255,94,94,.35); border-radius: 14px; background: rgba(255,94,94,.09); color: #ffb3b3; }
+.error-panel strong { font-size: 13px; }
+.error-panel p { margin: 4px 0 0; font-size: 12px; line-height: 1.45; }
+
+footer { color: #70706c; font-size: 11px; text-align: center; }

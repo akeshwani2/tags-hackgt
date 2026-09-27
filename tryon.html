@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Try It On</title>
+    <link rel="stylesheet" href="/src/tryon/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <p id="status-label" class="visually-hidden" aria-live="polite">Preparing camera</p>
+
+      <section class="stage" aria-label="Camera preview">
+        <video id="camera-output" autoplay playsinline muted></video>
+        <div id="stage-placeholder" class="stage-placeholder">
+          <div class="spinner" aria-hidden="true"></div>
+          <h1>Starting your camera</h1>
+          <p>Keep your upper body visible for the clearest result.</p>
+        </div>
+      </section>
+
+      <aside class="product-bar">
+        <img id="product-image" alt="" />
+        <div class="product-copy">
+          <p class="eyebrow">Trying on</p>
+          <h2 id="product-title">Selected garment</h2>
+          <a id="product-link" href="#" target="_blank" rel="noreferrer">View product</a>
+        </div>
+        <button id="retry-button" type="button" class="secondary-button" hidden>Retry</button>
+        <button id="stop-button" type="button" class="primary-button">Stop camera</button>
+      </aside>
+
+      <div id="error-panel" class="error-panel" hidden>
+        <strong id="error-title">Could not start try-on</strong>
+        <p id="error-message"></p>
+      </div>
+
+      <footer>
+        Your camera stops when this window closes.
+      </footer>
+    </main>
+    <script type="module" src="/src/tryon/main.ts"></script>
+  </body>
+</html>

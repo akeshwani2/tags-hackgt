@@ -1,0 +1,29 @@
+{
+  "name": "fitcam-try-on-extension",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1 --port 4173",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "server": "node --env-file-if-exists=.env.local server/index.mjs"
+  },
+  "dependencies": {
+    "@decartai/sdk": "0.2.3"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "3.0.0",
+    "@types/chrome": "^0.1.36",
+    "@types/node": "^24.7.2",
+    "@types/picomatch": "^4.0.2",
+    "jsdom": "^27.0.0",
+    "type-fest": "^5.0.1",
+    "typescript": "^5.9.3",
+    "vite": "8.3.1",
+    "vitest": "5.0.2"
+  }
+}
