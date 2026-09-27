@@ -20,6 +20,16 @@ const productTitle = requiredElement<HTMLElement>("product-title");
 const productLink = requiredElement<HTMLAnchorElement>("product-link");
 const retryButton = requiredElement<HTMLButtonElement>("retry-button");
 const addToCartButton = requiredElement<HTMLButtonElement>("add-to-cart-button");
+const checkoutPopover = requiredElement<HTMLElement>("checkout-popover");
+const checkoutClose = requiredElement<HTMLButtonElement>("checkout-close");
+const checkoutStepSummary = requiredElement<HTMLElement>("checkout-step-summary");
+const checkoutStepSuccess = requiredElement<HTMLElement>("checkout-step-success");
+const checkoutItemImage = requiredElement<HTMLImageElement>("checkout-item-image");
+const checkoutItemTitle = requiredElement<HTMLElement>("checkout-item-title");
+const checkoutItemLink = requiredElement<HTMLAnchorElement>("checkout-item-link");
+const checkoutSuccessTitle = requiredElement<HTMLElement>("checkout-success-title");
+const checkoutConfirm = requiredElement<HTMLButtonElement>("checkout-confirm");
+const checkoutDone = requiredElement<HTMLButtonElement>("checkout-done");
 const stopButton = requiredElement<HTMLButtonElement>("stop-button");
 const errorPanel = requiredElement<HTMLElement>("error-panel");
 const errorTitle = requiredElement<HTMLElement>("error-title");
@@ -29,11 +39,24 @@ let cameraStream: MediaStream | null = null;
 let realtimeClient: RealtimeClient | null = null;
 let activeSelection: ProductSelection | null = null;
 let initializationId = 0;
+let cartAdded = false;
+let orderPlaced = false;
 
 retryButton.addEventListener("click", () => void initialize());
 addToCartButton.addEventListener("click", () => {
+  if (!activeSelection) return;
+  cartAdded = true;
   addToCartButton.textContent = "Added to cart";
-  addToCartButton.disabled = true;
+  openCheckout(orderPlaced ? "success" : "summary");
+});
+checkoutClose.addEventListener("click", closeCheckout);
+checkoutDone.addEventListener("click", closeCheckout);
+checkoutConfirm.addEventListener("click", () => {
+  orderPlaced = true;
+  openCheckout("success");
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && !checkoutPopover.hidden) closeCheckout();
 });
 stopButton.addEventListener("click", () => {
   cleanup();
@@ -154,6 +177,39 @@ function renderProduct(selection: ProductSelection): void {
   productImage.src = selection.imageUrl;
   productImage.alt = selection.title;
   productLink.href = selection.productUrl;
+  renderCheckoutItem(selection);
+  if (cartAdded || orderPlaced) {
+    // Keep checkout copy in sync if the garment changes mid-session.
+    cartAdded = false;
+    orderPlaced = false;
+    addToCartButton.textContent = "Add to cart";
+    closeCheckout();
+  }
+}
+
+function renderCheckoutItem(selection: ProductSelection): void {
+  checkoutItemTitle.textContent = selection.title;
+  checkoutItemImage.src = selection.imageUrl;
+  checkoutItemImage.alt = selection.title;
+  checkoutItemLink.href = selection.productUrl;
+  checkoutSuccessTitle.textContent = selection.title;
+}
+
+function openCheckout(step: "summary" | "success"): void {
+  if (!activeSelection) return;
+  renderCheckoutItem(activeSelection);
+  checkoutStepSummary.hidden = step !== "summary";
+  checkoutStepSuccess.hidden = step !== "success";
+  checkoutPopover.hidden = false;
+  addToCartButton.setAttribute("aria-expanded", "true");
+  const focusTarget = step === "success" ? checkoutDone : checkoutConfirm;
+  focusTarget.focus();
+}
+
+function closeCheckout(): void {
+  checkoutPopover.hidden = true;
+  addToCartButton.setAttribute("aria-expanded", "false");
+  if (cartAdded) addToCartButton.focus();
 }
 
 function cleanup(): void {

@@ -32,7 +32,44 @@
           <a id="product-link" href="#" target="_blank" rel="noreferrer">View product</a>
         </div>
         <button id="retry-button" type="button" class="secondary-button" hidden>Retry</button>
-        <button id="add-to-cart-button" type="button" class="secondary-button">Add to cart</button>
+        <div class="cart-action">
+          <button id="add-to-cart-button" type="button" class="secondary-button" aria-haspopup="dialog" aria-expanded="false" aria-controls="checkout-popover">Add to cart</button>
+          <div id="checkout-popover" class="checkout-popover" hidden role="dialog" aria-modal="true" aria-labelledby="checkout-heading">
+            <button id="checkout-close" type="button" class="checkout-close" aria-label="Close checkout">Close</button>
+
+            <div id="checkout-step-summary" class="checkout-step">
+              <p class="eyebrow">Checkout</p>
+              <h3 id="checkout-heading">Order summary</h3>
+              <div class="checkout-item">
+                <img id="checkout-item-image" alt="" />
+                <div class="checkout-item-copy">
+                  <p id="checkout-item-title">Selected garment</p>
+                  <p class="checkout-meta">Qty <span id="checkout-qty">1</span></p>
+                  <a id="checkout-item-link" href="#" target="_blank" rel="noreferrer">View product</a>
+                </div>
+              </div>
+              <label class="checkout-field">
+                <span>Ship to</span>
+                <input id="checkout-shipping" type="text" value="123 Demo Street" autocomplete="off" />
+              </label>
+              <p class="checkout-note">Simulated checkout — nothing is charged.</p>
+              <div class="checkout-actions">
+                <button id="checkout-confirm" type="button" class="primary-button">Place order</button>
+              </div>
+            </div>
+
+            <div id="checkout-step-success" class="checkout-step" hidden>
+              <p class="eyebrow brand-label">tags</p>
+              <h3>Order placed</h3>
+              <p class="checkout-note">
+                Your simulated order for <strong id="checkout-success-title">this item</strong> is confirmed.
+              </p>
+              <div class="checkout-actions">
+                <button id="checkout-done" type="button" class="primary-button">Done</button>
+              </div>
+            </div>
+          </div>
+        </div>
         <button id="stop-button" type="button" class="primary-button">Stop camera</button>
       </aside>
 
